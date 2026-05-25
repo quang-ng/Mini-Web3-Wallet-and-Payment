@@ -1,89 +1,350 @@
-# Mini Web3 Wallet & Payment Backend
+# 🏦 Mini Web3 Wallet & Payment System
 
-A backend-focused Web3 project built with Node.js, TypeScript, Express, and ethers.js.
+> A practical backend-focused Web3 project to learn how Ethereum wallets and payments work by building a complete crypto payment infrastructure.
 
-This project is designed to help backend engineers understand how Ethereum works in practice by building a simplified crypto wallet and payment infrastructure.
+## 📌 Quick Start (5 minutes)
 
----
+```bash
+# 1. Start local Ethereum node
+anvil
 
-## Features
+# 2. Deploy contracts
+cd contracts && forge build && forge script scripts/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
 
-### Smart Contract
+# 3. Start backend
+cd backend && npm install && npm run dev
 
-- ETH deposit
-- ETH withdrawal
-- ERC20 token support
-- Event emission
-- Balance tracking
-
-### Backend
-
-- Wallet generation
-- Transaction signing
-- Transaction broadcasting
-- Blockchain event indexing
-- ETH balance tracking
-- REST APIs
-
-### Frontend (Optional)
-
-- MetaMask integration
-- Deposit ETH
-- View balances
-- Transaction history
+# 4. Backend runs on http://localhost:3000
+```
 
 ---
 
-## Tech Stack
+## 📋 Project Overview
 
-### Blockchain
+This project demonstrates how a complete Web3 payment system works by building:
 
-- Ethereum
-- Sepolia Testnet
-- Anvil
-- Foundry
+- **Smart Contracts**: A secure payment vault that handles ETH and tokens
+- **Backend Services**: APIs for wallet management, transactions, and balance tracking
+- **Database Layer**: PostgreSQL for transaction history and wallet data
+- **Event Indexing**: Real-time blockchain event synchronization
 
-### Backend
-
-- Node.js
-- TypeScript
-- Express
-- ethers.js
-- PostgreSQL
-
-### Frontend
-
-- React
-- wagmi
-- viem
+**Perfect for**: Backend engineers wanting to understand Ethereum, developers building payment systems, or anyone learning Web3 infrastructure.
 
 ---
 
-## Project Structure
+## 🗺️ Development Roadmap
 
-```text
+### Phase 1: Foundations ✅
+- [ ] Set up local development environment (Anvil, Foundry)
+- [ ] Write basic smart contract with ETH deposit/withdrawal
+- [ ] Test contract with Foundry
+- [ ] Create PostgreSQL database schema
+
+### Phase 2: Backend Core ⏳
+- [ ] Build wallet service (generate, store addresses)
+- [ ] Implement blockchain service (read balances, send transactions)
+- [ ] Create REST APIs for wallet operations
+- [ ] Set up transaction signing with private keys
+
+### Phase 3: Indexing & Events
+- [ ] Build event listener for contract events
+- [ ] Create database indexer worker
+- [ ] Sync blockchain state with PostgreSQL
+- [ ] Add transaction history API
+
+### Phase 4: Enhancement
+- [ ] Add ERC20 token support
+- [ ] Implement error handling and retry logic
+- [ ] Add request validation and security
+- [ ] Create comprehensive API documentation
+
+### Phase 5: Advanced (Future)
+- [ ] Multi-signature wallet support
+- [ ] Redis caching for performance
+- [ ] Kafka event streaming
+- [ ] Multi-chain support
+- [ ] Account abstraction (EIP-4337)
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Frontend (React)                       │
+│              MetaMask Integration                        │
+└──────────────────────┬──────────────────────────────────┘
+                       │ HTTP/REST
+┌──────────────────────▼──────────────────────────────────┐
+│                  Express Backend                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  Wallet API  │  │ Balance API  │  │ History API  │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└──────────────────────┬──────────────────────────────────┘
+                       │ ethers.js
+┌──────────────────────▼──────────────────────────────────┐
+│              Blockchain Services                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │   Wallet     │  │ Transaction  │  │   Event      │  │
+│  │   Service    │  │   Service    │  │  Listener    │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└──────────────────────┬──────────────────────────────────┘
+                       │ JSON-RPC
+┌──────────────────────▼──────────────────────────────────┐
+│         Ethereum (Anvil / Sepolia Testnet)              │
+│                Smart Contract                           │
+└──────────────────────────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────┐
+│              PostgreSQL Database                         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │  Wallets     │  │ Transactions │  │  Token Data  │  │
+│  └──────────────┘  └──────────────┘  └──────────────┘  │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📦 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Blockchain** | Ethereum, Sepolia Testnet, Anvil, Foundry |
+| **Backend** | Node.js, TypeScript, Express, ethers.js |
+| **Database** | PostgreSQL |
+| **Frontend** | React, wagmi, viem (optional) |
+
+---
+
+## 📁 Project Structure
+
+```
 mini-web3-wallet/
-│
-├── contracts/
-│   ├── src/
-│   ├── script/
-│   ├── test/
+├── contracts/                 # Smart contracts (Solidity)
+│   ├── src/                  # Contract source code
+│   ├── script/               # Deployment scripts
+│   ├── test/                 # Contract tests
 │   └── foundry.toml
 │
-├── backend/
+├── backend/                  # Backend service (Node.js/Express)
 │   ├── src/
-│   │   ├── api/
-│   │   ├── blockchain/
-│   │   ├── config/
-│   │   ├── db/
-│   │   ├── services/
-│   │   ├── workers/
+│   │   ├── api/              # REST endpoints
+│   │   ├── blockchain/       # Ethereum interaction
+│   │   ├── services/         # Business logic
+│   │   ├── workers/          # Event indexing
+│   │   ├── db/               # Database queries
+│   │   ├── config/           # Configuration
 │   │   └── index.ts
-│   │
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── .env
 │
-├── frontend/
-│
-└── README.md
+└── frontend/                 # Frontend (React + web3)
+```
+
+---
+
+## 🎯 Core Concepts
+
+This project teaches you:
+
+- **Wallets**: How to generate, store, and use Ethereum addresses
+- **Keys**: Public/private key cryptography and key management
+- **Transactions**: Creating, signing, and broadcasting transactions
+- **Gas**: Understanding gas costs and nonce management
+- **Smart Contracts**: Writing and interacting with Solidity contracts
+- **ERC20**: Token standards and token transfers
+- **Event Indexing**: Listening to and syncing blockchain events
+- **State Management**: Tracking balances and transaction history
+- **Backend Integration**: Building Web3-enabled APIs
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- Foundry/Forge ([Install](https://book.getfoundry.sh/getting-started/installation))
+- PostgreSQL 13+
+- Git
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone <repo-url>
+cd mini-web3-wallet
+
+# 2. Set up contracts
+cd contracts
+forge install
+forge build
+
+# 3. Set up backend
+cd ../backend
+npm install
+
+# 4. Create PostgreSQL database
+createdb web3_wallet
+
+# 5. Configure environment
+cp .env.example .env
+# Edit .env with your settings
+```
+
+### Running Locally
+
+**Terminal 1: Start Ethereum Node**
+```bash
+anvil
+```
+
+**Terminal 2: Deploy Contract**
+```bash
+cd contracts
+forge script scripts/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
+```
+
+**Terminal 3: Start Backend**
+```bash
+cd backend
+npm run dev
+```
+
+The API will be available at `http://localhost:3000`
+
+---
+
+## 🔌 API Endpoints
+
+### Wallet Management
+- `POST /api/wallets` — Create a new wallet
+- `GET /api/wallets` — List all wallets
+
+### Balances
+- `GET /api/balances/:address` — Get ETH balance for an address
+- `GET /api/balances/:address/tokens` — Get ERC20 token balances
+
+### Transactions
+- `POST /api/transactions/deposit` — Deposit ETH to contract
+- `POST /api/transactions/withdraw` — Withdraw ETH from contract
+- `GET /api/transactions` — Get transaction history
+- `GET /api/transactions/:txHash` — Get specific transaction
+
+---
+
+## 💾 Database Schema
+
+**wallets**
+```sql
+CREATE TABLE wallets (
+  id SERIAL PRIMARY KEY,
+  address TEXT NOT NULL UNIQUE,
+  public_key TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**transactions**
+```sql
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY,
+  tx_hash TEXT NOT NULL UNIQUE,
+  from_address TEXT,
+  to_address TEXT,
+  amount NUMERIC,
+  token_address TEXT,
+  status TEXT,
+  block_number INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+## 🔐 Environment Variables
+
+```env
+# Server
+PORT=3000
+NODE_ENV=development
+
+# Blockchain
+RPC_URL=http://127.0.0.1:8545
+CONTRACT_ADDRESS=0x...
+PRIVATE_KEY=0x...
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/web3_wallet
+
+# Logging
+LOG_LEVEL=debug
+```
+
+---
+
+## 📚 Learning Goals
+
+After completing this project, you'll understand:
+
+✅ How Ethereum transactions are created and signed  
+✅ How wallets manage keys and addresses  
+✅ How smart contracts store and manage state  
+✅ How ERC20 token standards work  
+✅ How to interact with blockchain from backend  
+✅ How event indexing and blockchain synchronization works  
+✅ How to build secure payment systems on Web3  
+
+---
+
+## 📖 Recommended Resources
+
+### Reading
+- [Mastering Ethereum](https://github.com/ethereumbook/ethereumbook) — Deep dive into Ethereum
+- [Ethereum Documentation](https://ethereum.org/developers) — Official Ethereum dev guide
+- [Foundry Book](https://book.getfoundry.sh) — Smart contract testing framework
+- [ethers.js Documentation](https://docs.ethers.org) — JavaScript Ethereum library
+
+### Tools
+- [Remix IDE](https://remix.ethereum.org) — Browser-based contract editor
+- [Sepolia Faucet](https://www.sepoliaether.com) — Get testnet ETH
+- [Etherscan Sepolia](https://sepolia.etherscan.io) — Block explorer
+
+---
+
+## 🐛 Common Issues
+
+**"Cannot connect to RPC"**
+```bash
+# Make sure Anvil is running
+anvil
+```
+
+**"Contract not deployed"**
+```bash
+# Deploy the contract
+cd contracts && forge script scripts/Deploy.s.sol:Deploy --rpc-url http://127.0.0.1:8545 --broadcast
+```
+
+**"Database connection error"**
+```bash
+# Ensure PostgreSQL is running and database exists
+createdb web3_wallet
+```
+
+---
+
+## 📝 License
+
+MIT
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit PRs.
+
+---
+
+**Happy Building! 🚀**
