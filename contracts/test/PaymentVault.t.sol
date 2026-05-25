@@ -102,5 +102,10 @@ contract PaymentVaultTest is Test {
         assertEq(vault.balances(user2), 3 ether);
     }
 
+    function test_getBalance_work() public {
+        vault.deposit{value: 2.5 ether}();
+        assertEq(vault.getBalance(address(this)), 2.5 ether);
+    }
+
     receive() external payable {}
 }
