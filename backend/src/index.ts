@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import walletRouter from './routes/wallet'
 import transactionRouter from './routes/transaction'
+import eventListener from "./workers/eventListener";
 
 
 dotenv.config();
@@ -23,6 +24,8 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
+
+  await eventListener.startListening()
 });
