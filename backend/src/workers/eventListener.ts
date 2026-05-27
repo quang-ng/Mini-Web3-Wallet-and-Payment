@@ -4,67 +4,94 @@ import contract from "../blockchain/contract";
 class EventListener {
   async startListening() {
     try {
-      console.log('[EventListener] ===== Starting Event Listener =====');
-      console.log('[EventListener] Waiting for contract events...');
+      console.log("[EventListener] ===== Starting Event Listener =====");
+      console.log("[EventListener] Waiting for contract events...");
 
-      contract.on("Deposit", async (user: string, amount: any, ...args: any[]) => {
-        console.log('[EventListener] ===== DEPOSIT EVENT DETECTED =====');
-        console.log('[EventListener] User:', user);
-        console.log('[EventListener] Amount (Wei):', amount.toString());
-        console.log('[EventListener] Amount (ETH):', amount.toString() / 1e18);
+      contract.on(
+        "Deposit",
+        async (user: string, amount: any, ...args: any[]) => {
+          console.log("[EventListener] ===== DEPOSIT EVENT DETECTED =====");
+          console.log("[EventListener] User:", user);
+          console.log("[EventListener] Amount (Wei):", amount.toString());
 
-        
+          const eventLog = args[args.length - 1];
+          const txHash = eventLog.log.transactionHash;
+          const blockNumber = eventLog.log.blockNumber;
 
-        
+          console.log("[EventListener] TX Hash:", txHash);
+          console.log("[EventListener] blockNumber:", blockNumber);
 
-        try {
-          const txHash = "pending-" + Date.now();
-          console.log('[EventListener] Saving to database with hash:', txHash);
+          try {
+            // Check for duplicates
+            const exists = await transactionDb.transactionExists(txHash);
+            if (exists) {
+              console.log("[EventListener] ⏭️  Deposit already in database, skipping");
+              return;
+            }
 
-          const blockNumber = args[0]?.log?.blockNumber || null;
+            await transactionDb.insertTransaction(
+              txHash,
+              user,
+              amount.toString(),
+              "deposit",
+              "confirmed",
+              blockNumber,
+            );
 
-          const result = await transactionDb.insertTransaction(
-            txHash,
-            user,
-            amount.toString(),
-            "deposit",
-            "confirmed",
-            blockNumber
+            await transactionDb.updateLastSyncedBlock(blockNumber, 1);
+
+            console.log("[EventListener] ✅ Deposit saved successfully!");
+          } catch (error) {
+            console.error("[EventListener] ❌ Error saving deposit:", error);
+          }
+        },
+      );
+
+      contract.on(
+        "Withdraw",
+        async (user: string, amount: any, ...args: any[]) => {
+          console.log("[EventListener] ===== WITHDRAW EVENT DETECTED =====");
+          console.log("[EventListener] User:", user);
+          console.log("[EventListener] Amount (Wei):", amount.toString());
+          console.log(
+            "[EventListener] Amount (ETH):",
+            amount.toString() / 1e18,
           );
 
-          console.log('[EventListener] ✅ Deposit saved successfully!');
-          console.log('[EventListener] Saved data:', result);
-        } catch (error) {
-          console.error("[EventListener] ❌ Error saving deposit:", error);
-        }
-      });
+          const eventLog = args[args.length - 1];
+          const txHash = eventLog.log.transactionHash;
+          const blockNumber = eventLog.log.blockNumber;
 
-      contract.on("Withdraw", async (user: string, amount: any) => {
-        console.log('[EventListener] ===== WITHDRAW EVENT DETECTED =====');
-        console.log('[EventListener] User:', user);
-        console.log('[EventListener] Amount (Wei):', amount.toString());
-        console.log('[EventListener] Amount (ETH):', amount.toString() / 1e18);
+          console.log("[EventListener] TX Hash:", txHash);
+          console.log("[EventListener] blockNumber:", blockNumber);
 
-        try {
-          const txHash = "pending-" + Date.now();
-          console.log('[EventListener] Saving to database with hash:', txHash);
+          try {
+            // Check for duplicates
+            const exists = await transactionDb.transactionExists(txHash);
+            if (exists) {
+              console.log("[EventListener] ⏭️  Withdraw already in database, skipping");
+              return;
+            }
 
-          const result = await transactionDb.insertTransaction(
-            txHash,
-            user,
-            amount.toString(),
-            "withdraw",
-            "confirmed",
-          );
+            await transactionDb.insertTransaction(
+              txHash,
+              user,
+              amount.toString(),
+              "withdraw",
+              "confirmed",
+              blockNumber
+            );
 
-          console.log('[EventListener] ✅ Withdraw saved successfully!');
-          console.log('[EventListener] Saved data:', result);
-        } catch (error) {
-          console.error("[EventListener] ❌ Error saving withdraw:", error);
-        }
-      });
+            await transactionDb.updateLastSyncedBlock(blockNumber, 1);
 
-      console.log('[EventListener] ===== Event Listener Ready =====');
+            console.log("[EventListener] ✅ Withdraw saved successfully!");
+          } catch (error) {
+            console.error("[EventListener] ❌ Error saving withdraw:", error);
+          }
+        },
+      );
+
+      console.log("[EventListener] ===== Event Listener Ready =====");
     } catch (error) {
       console.error("[EventListener] ❌ Error starting listener:", error);
       throw error;
