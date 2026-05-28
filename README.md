@@ -67,12 +67,15 @@ This project demonstrates how a complete Web3 payment system works by building:
 - [ ] Add token balance API endpoints
 - [ ] Support multiple token types
 
-### Phase 6: Multi-User Support
+### Phase 6: Multi-User Support & Simple Frontend
 - [ ] User registration and authentication (JWT)
 - [ ] User-wallet mapping in database
 - [ ] Authorization — users access only their own data
 - [ ] Scoped transaction history per user
 - [ ] Rate limiting per user
+- [ ] Frontend: Simple React UI (register/login)
+- [ ] Frontend: Dashboard (balance, transaction form)
+- [ ] Frontend: Transaction history view
 
 ### Phase 7: Testnet Deployment
 - [ ] Deploy contracts to Sepolia testnet
