@@ -35,22 +35,22 @@ This project demonstrates how a complete Web3 payment system works by building:
 ## 🗺️ Development Roadmap
 
 ### Phase 1: Foundations ✅
-- [ ] Set up local development environment (Anvil, Foundry)
-- [ ] Write basic smart contract with ETH deposit/withdrawal
-- [ ] Test contract with Foundry
-- [ ] Create PostgreSQL database schema
+- [x] Set up local development environment (Anvil, Foundry)
+- [x] Write basic smart contract with ETH deposit/withdrawal
+- [x] Test contract with Foundry
+- [x] Create PostgreSQL database schema
 
-### Phase 2: Backend Core ⏳
-- [ ] Build wallet service (generate, store addresses)
-- [ ] Implement blockchain service (read balances, send transactions)
-- [ ] Create REST APIs for wallet operations
-- [ ] Set up transaction signing with private keys
+### Phase 2: Backend Core ✅
+- [x] Build wallet service (generate, store addresses)
+- [x] Implement blockchain service (read balances, send transactions)
+- [x] Create REST APIs for wallet operations
+- [x] Set up transaction signing with private keys
 
-### Phase 3: Indexing & Events
-- [ ] Build event listener for contract events
-- [ ] Create database indexer worker
-- [ ] Sync blockchain state with PostgreSQL
-- [ ] Add transaction history API
+### Phase 3: Indexing & Events ✅
+- [x] Build event listener for contract events
+- [x] Create database indexer worker
+- [x] Sync blockchain state with PostgreSQL
+- [x] Add transaction history API
 
 ### Phase 4: Enhancement & Robustness ✅
 - [x] Add initial blockchain sync (catch missed events on startup)
@@ -88,9 +88,9 @@ This project demonstrates how a complete Web3 payment system works by building:
 - [ ] Environment config for production
 
 ### Phase 9: Production Deployment
-- [ ] Deploy contracts to Sepolia testnet
-- [ ] Deploy backend to EC2
-- [ ] Test with real users (friends)
+- [ ] Deploy backend to production EC2 (using Sepolia testnet)
+- [ ] Configure production database (RDS)
+- [ ] Test with real users
 
 ### Phase 10: Advanced (Future)
 - [ ] Multi-signature wallet support
