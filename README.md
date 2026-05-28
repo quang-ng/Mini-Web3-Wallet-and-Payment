@@ -67,35 +67,37 @@ This project demonstrates how a complete Web3 payment system works by building:
 - [ ] Add token balance API endpoints
 - [ ] Support multiple token types
 
-### Phase 6: Multi-User Support & Simple Frontend
+### Phase 6: Multi-User Support
 - [ ] User registration and authentication (JWT)
 - [ ] User-wallet mapping in database
 - [ ] Authorization — users access only their own data
 - [ ] Scoped transaction history per user
 - [ ] Rate limiting per user
-- [ ] Frontend: Simple React UI (register/login)
-- [ ] Frontend: Dashboard (balance, transaction form)
-- [ ] Frontend: Transaction history view
 
-### Phase 7: Testnet Deployment
+### Phase 7: Simple Frontend
+- [ ] React UI for register/login
+- [ ] Dashboard with balance display and transaction form
+- [ ] Transaction history view
+
+### Phase 8: Testnet Deployment
 - [ ] Deploy contracts to Sepolia testnet
 - [ ] Configure backend for testnet RPC
 - [ ] Set up environment configs for staging vs production
 - [ ] End-to-end testing on Sepolia
 - [ ] Document deployment process
 
-### Phase 8: Cloud Infrastructure
+### Phase 9: Cloud Infrastructure
 - [ ] Set up AWS EC2 instance with Node.js
 - [ ] Configure RDS PostgreSQL database
 - [ ] Set up HTTPS/SSL certificate
 - [ ] Environment config for production
 
-### Phase 9: Production Deployment
+### Phase 10: Production Deployment
 - [ ] Deploy backend to production EC2 (using Sepolia testnet)
 - [ ] Configure production database (RDS)
 - [ ] Test with real users
 
-### Phase 10: Advanced (Future)
+### Phase 11: Advanced (Future)
 - [ ] Multi-signature wallet support
 - [ ] Redis caching for performance
 - [ ] Kafka event streaming
