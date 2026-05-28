@@ -52,13 +52,47 @@ This project demonstrates how a complete Web3 payment system works by building:
 - [ ] Sync blockchain state with PostgreSQL
 - [ ] Add transaction history API
 
-### Phase 4: Enhancement
-- [ ] Add ERC20 token support
-- [ ] Implement error handling and retry logic
-- [ ] Add request validation and security
-- [ ] Create comprehensive API documentation
+### Phase 4: Enhancement & Robustness ✅
+- [x] Add initial blockchain sync (catch missed events on startup)
+- [x] Implement error handling and retry logic (exponential backoff)
+- [x] Add request validation and security (address & amount validation)
+- [x] Add sync history tracking and metadata persistence
 
-### Phase 5: Advanced (Future)
+### Phase 5: ERC20 Token Support ⏳
+- [x] Add ERC20 token contract (mint, transfer, approve) — SimpleToken.sol created
+- [x] Extend payment vault to handle ERC20 deposits/withdrawals — depositToken, withdrawToken, getTokenBalance added
+- [x] Test contracts locally on Anvil
+- [ ] Index ERC20 Transfer events — In progress (eventListener listening to Transfer events)
+- [ ] Update database schema to store token_address in transactions
+- [ ] Add token balance API endpoints
+- [ ] Support multiple token types
+
+### Phase 6: Multi-User Support
+- [ ] User registration and authentication (JWT)
+- [ ] User-wallet mapping in database
+- [ ] Authorization — users access only their own data
+- [ ] Scoped transaction history per user
+- [ ] Rate limiting per user
+
+### Phase 7: Testnet Deployment
+- [ ] Deploy contracts to Sepolia testnet
+- [ ] Configure backend for testnet RPC
+- [ ] Set up environment configs for staging vs production
+- [ ] End-to-end testing on Sepolia
+- [ ] Document deployment process
+
+### Phase 8: Cloud Infrastructure
+- [ ] Set up AWS EC2 instance with Node.js
+- [ ] Configure RDS PostgreSQL database
+- [ ] Set up HTTPS/SSL certificate
+- [ ] Environment config for production
+
+### Phase 9: Production Deployment
+- [ ] Deploy contracts to Sepolia testnet
+- [ ] Deploy backend to EC2
+- [ ] Test with real users (friends)
+
+### Phase 10: Advanced (Future)
 - [ ] Multi-signature wallet support
 - [ ] Redis caching for performance
 - [ ] Kafka event streaming
