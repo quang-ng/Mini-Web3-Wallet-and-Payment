@@ -3,6 +3,7 @@ import express, { Express, Request, Response } from "express";
 import walletRouter from "./routes/wallet";
 import transactionRouter from "./routes/transaction";
 import eventListener from "./workers/eventListener";
+import tokenBalanceRouter from "./routes/tokenBalance"
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const PORT = config.port;
 app.use(express.json());
 app.use("/api/wallet", walletRouter);
 app.use("/api/transaction", transactionRouter);
+app.use("/api/balances", tokenBalanceRouter);
 
 // Basic test route
 app.get("/health", (req: Request, res: Response) => {

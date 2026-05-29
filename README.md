@@ -58,14 +58,16 @@ This project demonstrates how a complete Web3 payment system works by building:
 - [x] Add request validation and security (address & amount validation)
 - [x] Add sync history tracking and metadata persistence
 
-### Phase 5: ERC20 Token Support ⏳
-- [x] Add ERC20 token contract (mint, transfer, approve) — SimpleToken.sol created
-- [x] Extend payment vault to handle ERC20 deposits/withdrawals — depositToken, withdrawToken, getTokenBalance added
-- [x] Test contracts locally on Anvil
-- [ ] Index ERC20 Transfer events — In progress (eventListener listening to Transfer events)
-- [ ] Update database schema to store token_address in transactions
-- [ ] Add token balance API endpoints
-- [ ] Support multiple token types
+### Phase 5: ERC20 Token Support ✅
+- [x] Add ERC20 token contract (mint, transfer, approve) — SimpleToken.sol with transfer, approve, transferFrom
+- [x] Extend payment vault to handle ERC20 deposits/withdrawals — depositToken, withdrawToken, getTokenBalance functions
+- [x] Test contracts locally on Anvil — Verified token transfers and vault operations
+- [x] Index ERC20 Transfer events — eventListener captures and stores all Transfer events
+- [x] Update database schema — Added token_address and to_address columns to transactions table
+- [x] Add token balance API endpoints:
+  - `GET /api/balances/:address/tokens` — Get token balance (from DB or blockchain)
+  - `GET /api/balances/tokens/history` — Get all token transfers for an address
+- [ ] Support multiple token types (future enhancement)
 
 ### Phase 6: Multi-User Support
 - [ ] User registration and authentication (JWT)
@@ -263,13 +265,20 @@ The API will be available at `http://localhost:3000`
 
 ### Balances
 - `GET /api/balances/:address` — Get ETH balance for an address
-- `GET /api/balances/:address/tokens` — Get ERC20 token balances
+- `GET /api/balances/:address/tokens` — Get ERC20 token balance
+  - Query params: `?fromBlockchain=true` to fetch real-time balance from contract
 
 ### Transactions
 - `POST /api/transactions/deposit` — Deposit ETH to contract
 - `POST /api/transactions/withdraw` — Withdraw ETH from contract
-- `GET /api/transactions` — Get transaction history
+- `GET /api/transactions` — Get ETH transaction history
 - `GET /api/transactions/:txHash` — Get specific transaction
+
+### Token Management (Phase 5)
+- `GET /api/balances/:address/tokens` — Get token balance for an address
+  - Supports `?fromBlockchain=true` for real-time blockchain query
+- `GET /api/balances/tokens/history` — Get token transfer history
+  - Query params: `?address=0x...` (required), `?token=0x...` (optional)
 
 ---
 
@@ -311,7 +320,7 @@ NODE_ENV=development
 
 # Blockchain
 RPC_URL=http://127.0.0.1:8545
-CONTRACT_ADDRESS=0x...
+q=0x...
 PRIVATE_KEY=0x...
 
 # Database

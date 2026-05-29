@@ -16,17 +16,28 @@ class TransactionDb {
     txHash: string,
     fromAddress: string,
     amount: string,
-    type: "deposit" | "withdraw",
+    type: "deposit" | "withdraw" | "transfer",
     status: string,
     blockNumber?: number,
+    token_address?: string,
+    to_address?: string,
   ) {
     try {
       console.log("[TransactionDb] Inserting transaction:", txHash);
       const result = await pool.query(
-        `INSERT INTO transactions (tx_hash, from_address, amount, type, status, block_number)
-         VALUES ($1, $2, $3, $4, $5, $6)
+        `INSERT INTO transactions (tx_hash, from_address, amount, type, status, block_number, token_address, to_address)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
-        [txHash, fromAddress, amount, type, status, blockNumber],
+        [
+          txHash,
+          fromAddress,
+          amount,
+          type,
+          status,
+          blockNumber,
+          token_address,
+          to_address,
+        ],
       );
       console.log("[TransactionDb] Transaction inserted:", result.rows[0]);
       return result.rows[0];
@@ -109,15 +120,15 @@ class TransactionDb {
     }
   }
 
-   async transactionExists(txHash: string): Promise<boolean> {
+  async transactionExists(txHash: string): Promise<boolean> {
     try {
       const result = await pool.query(
-        'SELECT 1 FROM transactions WHERE tx_hash = $1 LIMIT 1',
-        [txHash]
+        "SELECT 1 FROM transactions WHERE tx_hash = $1 LIMIT 1",
+        [txHash],
       );
       return result.rows.length > 0;
     } catch (error) {
-      console.error('[TransactionDb] Error checking transaction:', error);
+      console.error("[TransactionDb] Error checking transaction:", error);
       throw error;
     }
   }
@@ -127,26 +138,73 @@ class TransactionDb {
     lastBlockSynced: number,
     recordsSynced: number,
     durationMs: number,
-    status: 'success' | 'partial' | 'failed',
-    errorMessage?: string
+    status: "success" | "partial" | "failed",
+    errorMessage?: string,
   ): Promise<void> {
     try {
       await pool.query(
         `INSERT INTO sync_history (last_block_synced, records_synced, duration_ms, status, error_message)
          VALUES ($1, $2, $3, $4, $5)`,
-        [lastBlockSynced, recordsSynced, durationMs, status, errorMessage || null]
+        [
+          lastBlockSynced,
+          recordsSynced,
+          durationMs,
+          status,
+          errorMessage || null,
+        ],
       );
 
       // Keep only last 100 records
       await pool.query(
         `DELETE FROM sync_history WHERE id NOT IN (
           SELECT id FROM sync_history ORDER BY synced_at DESC LIMIT 100
-        )`
+        )`,
       );
 
-      console.log('[TransactionDb] ✅ Sync history recorded');
+      console.log("[TransactionDb] ✅ Sync history recorded");
     } catch (error) {
-      console.error('[TransactionDb] Error recording sync history:', error);
+      console.error("[TransactionDb] Error recording sync history:", error);
+      throw error;
+    }
+  }
+
+  async getTokenBalance(
+    address: string,
+    tokenAddress: string,
+  ): Promise<string> {
+    try {
+      const result = await pool.query(
+        `SELECT COALESCE(SUM(amount::numeric), 0) as balance 
+       FROM transactions 
+       WHERE to_address = $1 AND token_address = $2 AND type = 'transfer'`,
+        [address, tokenAddress],
+      );
+      return result.rows[0].balance;
+    } catch (error) {
+      console.error("[TransactionDb] Error getting token balance:", error);
+      throw error;
+    }
+  }
+  async getTokenTransactions(address: string, tokenAddress?: string) {
+    try {
+      let query = `
+      SELECT * FROM transactions 
+      WHERE type = 'transfer' 
+      AND (from_address = $1 OR to_address = $1)
+    `;
+      const params = [address.toLowerCase()];
+
+      if (tokenAddress) {
+        query += ` AND token_address = $2`;
+        params.push(tokenAddress.toLowerCase());
+      }
+
+      query += ` ORDER BY created_at DESC`;
+
+      const result = await pool.query(query, params);
+      return result.rows;
+    } catch (error) {
+      console.error("[TransactionDb] Error getting token transactions:", error);
       throw error;
     }
   }

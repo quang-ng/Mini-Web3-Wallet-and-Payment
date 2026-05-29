@@ -1,5 +1,6 @@
 import transactionDb from "../db/transactionDb";
-import contract from "../blockchain/contract";
+import contract, { tokenContract } from "../blockchain/contract";
+import config from "../config";
 
 class EventListener {
   async startListening() {
@@ -25,7 +26,9 @@ class EventListener {
             // Check for duplicates
             const exists = await transactionDb.transactionExists(txHash);
             if (exists) {
-              console.log("[EventListener] ⏭️  Deposit already in database, skipping");
+              console.log(
+                "[EventListener] ⏭️  Deposit already in database, skipping",
+              );
               return;
             }
 
@@ -69,7 +72,9 @@ class EventListener {
             // Check for duplicates
             const exists = await transactionDb.transactionExists(txHash);
             if (exists) {
-              console.log("[EventListener] ⏭️  Withdraw already in database, skipping");
+              console.log(
+                "[EventListener] ⏭️  Withdraw already in database, skipping",
+              );
               return;
             }
 
@@ -79,7 +84,7 @@ class EventListener {
               amount.toString(),
               "withdraw",
               "confirmed",
-              blockNumber
+              blockNumber,
             );
 
             await transactionDb.updateLastSyncedBlock(blockNumber, 1);
@@ -87,6 +92,42 @@ class EventListener {
             console.log("[EventListener] ✅ Withdraw saved successfully!");
           } catch (error) {
             console.error("[EventListener] ❌ Error saving withdraw:", error);
+          }
+        },
+      );
+
+      tokenContract.on(
+        "Transfer",
+        async (from: string, to: string, value: any, ...args: any[]) => {
+          const eventLog = args[args.length - 1];
+          const txHash = eventLog.log.transactionHash;
+          const blockNumber = eventLog.log.blockNumber;
+
+          try {
+            const exists = await transactionDb.transactionExists(txHash);
+
+            if (exists) {
+              return;
+            }
+
+            await transactionDb.insertTransaction(
+              txHash,
+              from,
+              value.toString(),
+              "transfer",
+              "confirmed",
+              blockNumber,
+              config.simpleTokenAddress,
+              to.toLowerCase()
+            );
+
+            await transactionDb.updateLastSyncedBlock(blockNumber, 1);
+            console.log("[EventListener] ✅ Transfer saved successfully!");
+          } catch (error) {
+            console.error(
+              "[EventListener] Error to processing transfer ",
+              error,
+            );
           }
         },
       );
