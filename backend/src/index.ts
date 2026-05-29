@@ -4,6 +4,11 @@ import walletRouter from "./routes/wallet";
 import transactionRouter from "./routes/transaction";
 import eventListener from "./workers/eventListener";
 import tokenBalanceRouter from "./routes/tokenBalance"
+import authRouter from "./routes/auth"
+import transferRouter from "./routes/transfer"
+import walletsRouter from "./routes/wallets"
+
+
 
 dotenv.config();
 
@@ -19,6 +24,9 @@ app.use(express.json());
 app.use("/api/wallet", walletRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/balances", tokenBalanceRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/transfer", transferRouter);
+app.use("/api/wallets", walletsRouter)
 
 // Basic test route
 app.get("/health", (req: Request, res: Response) => {

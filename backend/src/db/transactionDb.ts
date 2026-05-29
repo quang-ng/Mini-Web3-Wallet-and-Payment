@@ -21,12 +21,13 @@ class TransactionDb {
     blockNumber?: number,
     token_address?: string,
     to_address?: string,
+    user_id?: number
   ) {
     try {
       console.log("[TransactionDb] Inserting transaction:", txHash);
       const result = await pool.query(
-        `INSERT INTO transactions (tx_hash, from_address, amount, type, status, block_number, token_address, to_address)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `INSERT INTO transactions (tx_hash, from_address, amount, type, status, block_number, token_address, to_address, user_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
         [
           txHash,
@@ -37,6 +38,7 @@ class TransactionDb {
           blockNumber,
           token_address,
           to_address,
+          user_id
         ],
       );
       console.log("[TransactionDb] Transaction inserted:", result.rows[0]);
