@@ -2,10 +2,11 @@ import { Router, Request, Response } from 'express';
 import { hashPassword, comparePassword } from '../auth/password';
 import { generateToken } from '../auth/jwt';
 import userDb from '../db/userDb';
+import { registrationLimiter, loginLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', registrationLimiter, async (req: Request, res: Response) => {
   try {
     const { email, name, password } = req.body;
 
@@ -31,7 +32,7 @@ router.post('/register', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', loginLimiter, async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 

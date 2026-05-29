@@ -5,10 +5,11 @@ import userDb from '../db/userDb';
 import transactionDb from '../db/transactionDb';
 import { ethers } from 'ethers';
 import config from '../config';
+import { transferLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
-router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+router.post('/', transferLimiter, authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { wallet_address, to_address, amount, token_address } = req.body;
     const user_id = req.user?.user_id;
