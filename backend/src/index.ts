@@ -30,6 +30,7 @@ app.use(cors({
 app.use(express.json());
 app.use("/api/wallet", walletRouter);
 app.use("/api/transaction", transactionRouter);
+app.use("/api/transactions", transactionRouter);
 app.use("/api/balances", tokenBalanceRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transfer", transferRouter);

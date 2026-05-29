@@ -3,6 +3,7 @@ import { verifyToken, JWTPayload } from './jwt';
 
 export interface AuthRequest extends Request {
   user?: JWTPayload;
+  userId?: number;
 }
 
 export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
@@ -18,5 +19,6 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   }
 
   req.user = payload;
+  (req as any).userId = payload.user_id;
   next();
 }

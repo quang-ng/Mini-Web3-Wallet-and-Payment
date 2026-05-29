@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import WalletImport from './pages/WalletImport';
 import WalletList from './pages/WalletList';
 import Transfer from './pages/Transfer';
+import TransactionHistory from './pages/TransactionHistory';
 
 import './App.css';
 
@@ -52,6 +53,14 @@ const AppContent: React.FC = () => {
           element={
             <ProtectedRoute>
               <Transfer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <TransactionHistory />
             </ProtectedRoute>
           }
         />

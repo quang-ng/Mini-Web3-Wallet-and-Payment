@@ -190,8 +190,8 @@ class TransactionDb {
   async getTokenTransactions(address: string, tokenAddress?: string) {
     try {
       let query = `
-      SELECT * FROM transactions 
-      WHERE type = 'transfer' 
+      SELECT * FROM transactions
+      WHERE type = 'transfer'
       AND (from_address = $1 OR to_address = $1)
     `;
       const params = [address.toLowerCase()];
@@ -207,6 +207,48 @@ class TransactionDb {
       return result.rows;
     } catch (error) {
       console.error("[TransactionDb] Error getting token transactions:", error);
+      throw error;
+    }
+  }
+
+  async getTransactionsByUserId(userId: number, limit: number = 50, offset: number = 0) {
+    try {
+      console.log(`[TransactionDb] Fetching transactions for user ${userId}`);
+
+      const countResult = await pool.query(
+        `SELECT COUNT(*) as total FROM transactions WHERE user_id = $1`,
+        [userId]
+      );
+      const total = parseInt(countResult.rows[0].total, 10);
+
+      const result = await pool.query(
+        `SELECT
+          id,
+          tx_hash,
+          from_address,
+          to_address,
+          amount,
+          token_address,
+          type,
+          status,
+          created_at,
+          block_number
+         FROM transactions
+         WHERE user_id = $1
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [userId, limit, offset]
+      );
+
+      return {
+        transactions: result.rows,
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total
+      };
+    } catch (error) {
+      console.error("[TransactionDb] Error fetching user transactions:", error);
       throw error;
     }
   }

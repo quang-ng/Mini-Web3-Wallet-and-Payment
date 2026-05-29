@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import transactionService from "../services/transactionService";
 import transactionDb from "../db/transactionDb";
 import { validateAmount, validateAddress, ValidationError } from "../utils/validator";
+import { authMiddleware } from "../auth/middleware";
 
 const router = express.Router();
 
@@ -80,6 +81,34 @@ router.get("/all", async (req: Request, res: Response) => {
     });
   } catch (err) {
     res.status(500).json({ error: String(err) });
+  }
+});
+
+router.get("/", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).userId;
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const result = await transactionDb.getTransactionsByUserId(userId, limit, offset);
+
+    res.json({
+      success: true,
+      transactions: result.transactions,
+      pagination: {
+        total: result.total,
+        limit: result.limit,
+        offset: result.offset,
+        hasMore: result.hasMore
+      }
+    });
+  } catch (error: any) {
+    console.error("[Transaction Route] Error:", error);
+    res.status(500).json({ message: "Failed to fetch transactions" });
   }
 });
 

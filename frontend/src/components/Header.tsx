@@ -30,6 +30,9 @@ const Header: React.FC = () => {
               <Link to="/transfer" className={styles.link}>
                 Transfer
               </Link>
+              <Link to="/transactions" className={styles.link}>
+                History
+              </Link>
               <div className={styles.userMenu}>
                 <span className={styles.email}>{userEmail}</span>
                 <button onClick={handleLogout} className={styles.logoutBtn}>
