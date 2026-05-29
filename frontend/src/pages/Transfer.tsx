@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { walletAPI, transferAPI } from '../services/api';
+import { TOKENS } from '../config/tokens';
 import ErrorAlert from '../components/ErrorAlert';
 import SuccessAlert from '../components/SuccessAlert';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -28,6 +29,7 @@ const Transfer: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [txHash, setTxHash] = useState('');
+  const [tokenSymbol, setTokenSymbol] = useState('TOKEN');
 
   const fetchWallets = useCallback(async () => {
     setLoadingWallets(true);
@@ -50,6 +52,16 @@ const Transfer: React.FC = () => {
   useEffect(() => {
     fetchWallets();
   }, [fetchWallets]);
+
+  const handleTokenSelect = (address: string) => {
+    setTokenAddress(address);
+    const token = TOKENS.find(t => t.address.toLowerCase() === address.toLowerCase());
+    if (token) {
+      setTokenSymbol(token.symbol);
+    } else {
+      setTokenSymbol('TOKEN');
+    }
+  };
 
   const validateForm = () => {
     if (!selectedWallet) {
@@ -198,19 +210,25 @@ const Transfer: React.FC = () => {
 
             {!isETH && (
               <div className={styles.formGroup}>
-                <label htmlFor="tokenAddress">Token Contract Address</label>
-                <input
-                  id="tokenAddress"
-                  type="text"
+                <label htmlFor="tokenSelect">Select Token</label>
+                <select
+                  id="tokenSelect"
                   value={tokenAddress}
-                  onChange={(e) => setTokenAddress(e.target.value)}
-                  placeholder="0x..."
-                />
+                  onChange={(e) => handleTokenSelect(e.target.value)}
+                  required
+                >
+                  <option value="">-- Select a token --</option>
+                  {TOKENS.map((token) => (
+                    <option key={token.address} value={token.address}>
+                      {token.symbol} - {token.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
 
             <div className={styles.formGroup}>
-              <label htmlFor="amount">Amount {isETH ? '(ETH)' : '(Tokens)'}</label>
+              <label htmlFor="amount">Amount {isETH ? '(ETH)' : `(${tokenSymbol})`}</label>
               <input
                 id="amount"
                 type="number"
