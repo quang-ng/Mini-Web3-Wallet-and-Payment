@@ -1,0 +1,17 @@
+import React from 'react';
+import styles from './LoadingSpinner.module.css';
+
+interface Props {
+  message?: string;
+}
+
+const LoadingSpinner: React.FC<Props> = ({ message = 'Loading...' }) => {
+  return (
+    <div className={styles.container}>
+      <div className={styles.spinner}></div>
+      <p className={styles.message}>{message}</p>
+    </div>
+  );
+};
+
+export default LoadingSpinner;

@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
+import cors from "cors";
 import walletRouter from "./routes/wallet";
 import transactionRouter from "./routes/transaction";
 import eventListener from "./workers/eventListener";
@@ -20,6 +21,12 @@ const app: Express = express();
 const PORT = config.port;
 
 // Middleware
+app.use(cors({
+  origin: ['http://localhost:3001', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use("/api/wallet", walletRouter);
 app.use("/api/transaction", transactionRouter);
