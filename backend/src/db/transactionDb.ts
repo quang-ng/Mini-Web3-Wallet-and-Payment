@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import config from "../config";
+import logger from "../utils/logger";
 
 // Connection pool
 const pool = new Pool({
@@ -24,7 +25,7 @@ class TransactionDb {
     user_id?: number
   ) {
     try {
-      console.log("[TransactionDb] Inserting transaction:", txHash);
+      logger.debug("TransactionDb", "Inserting transaction", { txHash, type, amount, user_id });
       const result = await pool.query(
         `INSERT INTO transactions (tx_hash, from_address, amount, type, status, block_number, token_address, to_address, user_id)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -41,10 +42,10 @@ class TransactionDb {
           user_id
         ],
       );
-      console.log("[TransactionDb] Transaction inserted:", result.rows[0]);
+      logger.info("TransactionDb", "Transaction inserted successfully", { txHash, transactionId: result.rows[0].id, type, user_id });
       return result.rows[0];
     } catch (error) {
-      console.error("[TransactionDb] Error inserting:", error);
+      logger.error("TransactionDb", "Error inserting transaction:", error);
       throw error;
     }
   }

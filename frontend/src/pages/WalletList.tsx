@@ -10,6 +10,8 @@ interface Wallet {
   wallet_address: string;
   label: string;
   added_at: string;
+  balance?: string;
+  tokenBalance?: string;
 }
 
 const WalletList: React.FC = () => {
@@ -74,9 +76,21 @@ const WalletList: React.FC = () => {
                   <p className={styles.walletAddress} title={wallet.wallet_address}>
                     {maskAddress(wallet.wallet_address)}
                   </p>
-                  <small className={styles.addedAt}>
-                    Added: {new Date(wallet.added_at).toLocaleDateString()}
-                  </small>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.5rem' }}>
+                    <small className={styles.addedAt}>
+                      Added: {new Date(wallet.added_at).toLocaleDateString()}
+                    </small>
+                    {wallet.balance !== undefined && (
+                      <small style={{ color: '#667eea', fontWeight: 'bold' }}>
+                        Ξ {parseFloat(wallet.balance).toFixed(4)} ETH
+                      </small>
+                    )}
+                    {wallet.tokenBalance !== undefined && (
+                      <small style={{ color: '#764ba2', fontWeight: 'bold' }}>
+                        🎫 {parseFloat(wallet.tokenBalance).toFixed(4)} SIMPLE
+                      </small>
+                    )}
+                  </div>
                 </div>
                 <div className={styles.walletActions}>
                   <button

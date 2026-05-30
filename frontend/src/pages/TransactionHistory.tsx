@@ -82,10 +82,16 @@ const TransactionHistory: React.FC = () => {
                     <tr key={tx.id} style={{ borderBottom: '1px solid #eee' }}>
                       <td style={{ padding: '0.75rem' }}>{formatDate(tx.created_at)}</td>
                       <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                        {formatAddress(tx.from_address)}
+                        <a href={`https://etherscan.io/address/${tx.from_address}`} target="_blank" rel="noopener noreferrer"
+                          style={{ color: '#667eea', textDecoration: 'none' }}>
+                          {formatAddress(tx.from_address)}
+                        </a>
                       </td>
                       <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                        {formatAddress(tx.to_address)}
+                        <a href={`https://etherscan.io/address/${tx.to_address}`} target="_blank" rel="noopener noreferrer"
+                          style={{ color: '#667eea', textDecoration: 'none' }}>
+                          {formatAddress(tx.to_address)}
+                        </a>
                       </td>
                       <td style={{ padding: '0.75rem', textAlign: 'right' }}>
                         {tx.amount} {tx.token_address ? 'tokens' : 'ETH'}

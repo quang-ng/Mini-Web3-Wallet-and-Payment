@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { walletAPI, transferAPI } from '../services/api';
+import { getTokenBalance } from '../services/balanceService';
 import { TOKENS } from '../config/tokens';
+import { validateAddress } from '../utils/addressValidator';
 import ErrorAlert from '../components/ErrorAlert';
 import SuccessAlert from '../components/SuccessAlert';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -30,6 +32,9 @@ const Transfer: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [txHash, setTxHash] = useState('');
   const [tokenSymbol, setTokenSymbol] = useState('TOKEN');
+  const [addressValidation, setAddressValidation] = useState<{ isValid: boolean; error?: string }>({ isValid: false });
+  const [tokenBalance, setTokenBalance] = useState<string>('0');
+  const [loadingBalance, setLoadingBalance] = useState(false);
 
   const fetchWallets = useCallback(async () => {
     setLoadingWallets(true);
@@ -53,13 +58,20 @@ const Transfer: React.FC = () => {
     fetchWallets();
   }, [fetchWallets]);
 
-  const handleTokenSelect = (address: string) => {
+  const handleTokenSelect = async (address: string) => {
     setTokenAddress(address);
     const token = TOKENS.find(t => t.address.toLowerCase() === address.toLowerCase());
     if (token) {
       setTokenSymbol(token.symbol);
+      if (selectedWallet) {
+        setLoadingBalance(true);
+        const balance = await getTokenBalance(address, selectedWallet, token.decimals);
+        setTokenBalance(balance);
+        setLoadingBalance(false);
+      }
     } else {
       setTokenSymbol('TOKEN');
+      setTokenBalance('0');
     }
   };
 
@@ -181,9 +193,27 @@ const Transfer: React.FC = () => {
                 id="recipient"
                 type="text"
                 value={recipientAddress}
-                onChange={(e) => setRecipientAddress(e.target.value)}
+                onChange={(e) => {
+                  setRecipientAddress(e.target.value);
+                  if (e.target.value) {
+                    setAddressValidation(validateAddress(e.target.value));
+                  }
+                }}
                 placeholder="0x..."
+                style={{
+                  borderColor: recipientAddress && !addressValidation.isValid ? '#ff6b6b' : recipientAddress && addressValidation.isValid ? '#51cf66' : '#ddd',
+                }}
               />
+              {recipientAddress && !addressValidation.isValid && (
+                <small style={{ color: '#ff6b6b', display: 'block', marginTop: '0.25rem' }}>
+                  ✗ {addressValidation.error}
+                </small>
+              )}
+              {recipientAddress && addressValidation.isValid && (
+                <small style={{ color: '#51cf66', display: 'block', marginTop: '0.25rem' }}>
+                  ✓ Valid address
+                </small>
+              )}
             </div>
 
             <div className={styles.formGroup}>
@@ -209,22 +239,44 @@ const Transfer: React.FC = () => {
             </div>
 
             {!isETH && (
-              <div className={styles.formGroup}>
-                <label htmlFor="tokenSelect">Select Token</label>
-                <select
-                  id="tokenSelect"
-                  value={tokenAddress}
-                  onChange={(e) => handleTokenSelect(e.target.value)}
-                  required
-                >
-                  <option value="">-- Select a token --</option>
-                  {TOKENS.map((token) => (
-                    <option key={token.address} value={token.address}>
-                      {token.symbol} - {token.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <>
+                <div className={styles.formGroup}>
+                  <label htmlFor="tokenSelect">Select Token</label>
+                  <select
+                    id="tokenSelect"
+                    value={tokenAddress}
+                    onChange={(e) => handleTokenSelect(e.target.value)}
+                    required
+                  >
+                    <option value="">-- Select a token --</option>
+                    {TOKENS.map((token) => (
+                      <option key={token.address} value={token.address}>
+                        {token.symbol} - {token.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {tokenAddress && (
+                  <div style={{
+                    padding: '0.75rem',
+                    backgroundColor: '#f0f4ff',
+                    borderRadius: '4px',
+                    marginBottom: '1rem',
+                    borderLeft: '4px solid #667eea'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#666', fontSize: '0.9rem' }}>Your Balance:</span>
+                      {loadingBalance ? (
+                        <span style={{ color: '#667eea', fontWeight: 'bold' }}>Loading...</span>
+                      ) : (
+                        <span style={{ color: '#667eea', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                          {parseFloat(tokenBalance).toFixed(6)} {tokenSymbol}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
 
             <div className={styles.formGroup}>

@@ -7,7 +7,7 @@ import eventListener from "./workers/eventListener";
 import tokenBalanceRouter from "./routes/tokenBalance"
 import authRouter from "./routes/auth"
 import transferRouter from "./routes/transfer"
-import walletsRouter from "./routes/wallets"
+import authWalletsRouter from "./routes/auth_wallets"
 
 
 
@@ -34,11 +34,11 @@ app.use("/api/transactions", transactionRouter);
 app.use("/api/balances", tokenBalanceRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/transfer", transferRouter);
-app.use("/api/wallets", walletsRouter)
+app.use("/api/wallets", authWalletsRouter)
 
 // Basic test route
 app.get("/health", (req: Request, res: Response) => {
-  res.json({ message: "Server is running!" });
+  res.json({ message: "Server is running22222222!" });
 });
 
 // Start server

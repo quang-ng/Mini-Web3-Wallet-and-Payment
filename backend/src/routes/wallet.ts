@@ -9,6 +9,7 @@ router.get("/info", async (req: Request, res: Response) => {
     console.log('[WalletRoute] GET /info called');
     const address = await walletService.getSignerAddress();
     console.log('[WalletRoute] Got address:', address);
+    
     const balance = await walletService.getBalance(address);
     console.log('[WalletRoute] Got balance:', balance);
     const network = await walletService.getNetworkInfo();

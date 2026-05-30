@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import logger from '../utils/logger';
 
 const pool = new Pool({
   host: 'localhost',
@@ -28,28 +29,34 @@ export interface UserWallet {
 class UserDb {
   async createUser(email: string, name: string, passwordHash: string): Promise<User> {
     try {
+      logger.debug('UserDb', 'Creating user', { email, name });
       const result = await pool.query(
         `INSERT INTO users (email, name, password_hash)
          VALUES ($1, $2, $3)
          RETURNING *`,
         [email, name, passwordHash]
       );
+      logger.info('UserDb', 'User created successfully', { userId: result.rows[0].id, email });
       return result.rows[0];
     } catch (error) {
-      console.error('[UserDb] Error creating user:', error);
+      logger.error('UserDb', 'Error creating user:', error);
       throw error;
     }
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
     try {
+      logger.debug('UserDb', 'Finding user by email', { email });
       const result = await pool.query(
         `SELECT * FROM users WHERE email = $1`,
         [email]
       );
+      if (result.rows[0]) {
+        logger.debug('UserDb', 'User found', { userId: result.rows[0].id, email });
+      }
       return result.rows[0] || null;
     } catch (error) {
-      console.error('[UserDb] Error finding user by email:', error);
+      logger.error('UserDb', 'Error finding user by email:', error);
       throw error;
     }
   }
@@ -69,15 +76,17 @@ class UserDb {
 
   async addWallet(userId: number, walletAddress: string, encryptedPrivateKey: string, label?: string): Promise<UserWallet> {
     try {
+      logger.debug('UserDb', 'Adding wallet for user', { userId, walletAddress, label });
       const result = await pool.query(
         `INSERT INTO user_wallets (user_id, wallet_address, encrypted_private_key, label)
          VALUES ($1, $2, $3, $4)
          RETURNING *`,
         [userId, walletAddress.toLowerCase(), encryptedPrivateKey, label || null]
       );
+      logger.info('UserDb', 'Wallet added successfully', { userId, walletAddress, walletId: result.rows[0].id });
       return result.rows[0];
     } catch (error) {
-      console.error('[UserDb] Error adding wallet:', error);
+      logger.error('UserDb', 'Error adding wallet:', error);
       throw error;
     }
   }
@@ -110,13 +119,16 @@ class UserDb {
 
   async checkWalletOwnership(userId: number, walletAddress: string): Promise<boolean> {
     try {
+      logger.debug('UserDb', 'Checking wallet ownership', { userId, walletAddress });
       const result = await pool.query(
         `SELECT 1 FROM user_wallets WHERE user_id = $1 AND wallet_address = $2 LIMIT 1`,
         [userId, walletAddress.toLowerCase()]
       );
-      return result.rows.length > 0;
+      const owns = result.rows.length > 0;
+      logger.debug('UserDb', `Wallet ownership check: ${owns ? 'owns' : 'does not own'}`, { userId, walletAddress });
+      return owns;
     } catch (error) {
-      console.error('[UserDb] Error checking wallet ownership:', error);
+      logger.error('UserDb', 'Error checking wallet ownership:', error);
       throw error;
     }
   }

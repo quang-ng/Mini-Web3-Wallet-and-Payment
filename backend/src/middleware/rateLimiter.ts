@@ -24,8 +24,5 @@ export const transferLimiter = rateLimit({
   message: 'Too many transfer requests, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    return (req as any).userId?.toString() || req.ip || '';
-  },
   skip: (req) => process.env.NODE_ENV === 'development',
 });

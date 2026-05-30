@@ -14,10 +14,9 @@ router.post("/deposit", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Amount is required" });
     }
 
-    // Validate amount
-    console.log("FFFF333: ", amount)
+    
     const validAmount = validateAmount(amount);
-    console.log("FFFF: ", validAmount)
+    
 
     const result = await transactionService.deposit(validAmount);
     res.json(result);
