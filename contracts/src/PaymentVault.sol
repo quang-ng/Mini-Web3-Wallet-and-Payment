@@ -12,7 +12,9 @@ interface IERC20 {
 }
 
 contract PaymentVault {
+    address public owner;
     mapping(address => uint256) public balances;
+    mapping(address => bool) public hasAccount;
     mapping(address => mapping(address => uint256)) public tokenBalances;
 
     event Deposit(address indexed user, uint256 amount);
@@ -27,6 +29,26 @@ contract PaymentVault {
         address indexed token,
         uint256 amount
     );
+    event TransferETH(address indexed from, address indexed to, uint256 amount);
+    event TransferToken(
+        address indexed from,
+        address indexed to,
+        address indexed token,
+        uint256 amount
+    );
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only onwer can call this!");
+        _;
+    }
+
+    function registerAccount(address user) public onlyOwner {
+        require(user != address(0), "Invalid address");
+        hasAccount[user] = true;
+    }
 
     function deposit() public payable {
         balances[msg.sender] += msg.value;
@@ -53,7 +75,11 @@ contract PaymentVault {
         require(token != address(0), "Invalid token address");
         require(amount > 0, "Amount must be greater than 0");
 
-        bool success = IERC20(token).transferFrom(msg.sender, address(this), amount);
+        bool success = IERC20(token).transferFrom(
+            msg.sender,
+            address(this),
+            amount
+        );
         require(success, "Token tranfer failed");
 
         tokenBalances[msg.sender][token] += amount;
@@ -80,7 +106,38 @@ contract PaymentVault {
         emit WithdrawToken(msg.sender, token, amount);
     }
 
-    function getTokenBalance(address account, address token) public view returns (uint256) {
+    function getTokenBalance(
+        address account,
+        address token
+    ) public view returns (uint256) {
         return tokenBalances[account][token];
+    }
+
+    function transferETH(address payable to, uint256 amount) public {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        require(to != address(0), "Invalid address");
+        require(amount > 0, "Amount must be greater than 0");
+        require(hasAccount[to], "Recipient does not have an account");
+
+        balances[msg.sender] -= amount;
+        balances[to] += amount;
+
+        emit TransferETH(msg.sender, to, amount);
+    }
+
+    function transferToken(address token, address to, uint256 amount) public {
+        require(token != address(0), "Invalid token address");
+        require(to != address(0), "Invalid recipient address");
+        require(amount > 0, "Amount must be greater than 0");
+        require(
+            tokenBalances[msg.sender][token] >= amount,
+            "Insufficient token balance"
+        );
+        require(hasAccount[to], "Recipient does not have an account");
+
+        tokenBalances[msg.sender][token] -= amount;
+        tokenBalances[to][token] += amount;
+
+        emit TransferToken(msg.sender, to, token, amount);
     }
 }

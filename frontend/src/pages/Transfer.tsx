@@ -109,11 +109,12 @@ const Transfer: React.FC = () => {
 
     setLoading(true);
     try {
+      const symbol = isETH ? 'ETH' : 'SIMPLE';
       const response = await transferAPI.transfer(
         selectedWallet,
         recipientAddress,
         amount,
-        isETH ? undefined : tokenAddress
+        symbol
       );
 
       setTxHash(response.data.tx_hash);

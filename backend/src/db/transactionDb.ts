@@ -7,9 +7,10 @@ const pool = new Pool({
   host: "localhost",
   port: 5432,
   database: "web3_wallet",
-  user: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASSWORD || "",
+  user: config.dbUser,
+  password: config.dbPassword || "",
 });
+
 
 class TransactionDb {
   // Insert a new transaction

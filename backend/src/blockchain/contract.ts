@@ -5,17 +5,17 @@ import config from '../config';
 import SIMPLE_TOKEN_ABI from './tokenAbi';
 
 
-const contract = new ethers.Contract(
-    config.contractAddress,
+const paymentVaultcontract = new ethers.Contract(
+    config.paymentVaultContractAddress,
     PAYMENT_VAULT_ABI,
     signer
 )
 
-const tokenContract = new ethers.Contract(
+const simpleTokenContract = new ethers.Contract(
     config.simpleTokenAddress,
     SIMPLE_TOKEN_ABI,
     signer
 )
 
-export default contract;
-export {tokenContract}
+export default paymentVaultcontract;
+export {simpleTokenContract as tokenContract}

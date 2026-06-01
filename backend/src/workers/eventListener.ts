@@ -1,5 +1,5 @@
 import transactionDb from "../db/transactionDb";
-import contract, { tokenContract } from "../blockchain/contract";
+import paymentVaultcontract, { tokenContract } from "../blockchain/contract";
 import config from "../config";
 
 class EventListener {
@@ -8,7 +8,7 @@ class EventListener {
       console.log("[EventListener] ===== Starting Event Listener =====");
       console.log("[EventListener] Waiting for contract events...");
 
-      contract.on(
+      paymentVaultcontract.on(
         "Deposit",
         async (user: string, amount: any, ...args: any[]) => {
           console.log("[EventListener] ===== DEPOSIT EVENT DETECTED =====");
@@ -50,7 +50,7 @@ class EventListener {
         },
       );
 
-      contract.on(
+      paymentVaultcontract.on(
         "Withdraw",
         async (user: string, amount: any, ...args: any[]) => {
           console.log("[EventListener] ===== WITHDRAW EVENT DETECTED =====");

@@ -5,6 +5,7 @@ import userDb from '../db/userDb';
 import { registrationLimiter, loginLimiter } from '../middleware/rateLimiter';
 import logger from '../utils/logger';
 
+
 const router = Router();
 
 router.post('/register', registrationLimiter, async (req: Request, res: Response) => {
@@ -26,6 +27,7 @@ router.post('/register', registrationLimiter, async (req: Request, res: Response
     logger.debug('Auth', 'Hashing password for new user', { email });
     const passwordHash = await hashPassword(password);
     const user = await userDb.createUser(email, name, passwordHash);
+
 
     logger.info('Auth', 'User registered successfully', { userId: user.id, email });
     res.status(201).json({

@@ -26,23 +26,42 @@ export const authAPI = {
 
 export const walletAPI = {
   import: (privateKey: string, label: string) =>
-    api.post('/wallets/import', { private_key: privateKey, label }),
-  list: () => api.get('/wallets/list'),
+    api.post('/wallet/import', { private_key: privateKey, label }),
+  create: (label?: string) =>
+    api.post('/wallet/create', { label }),
+  list: () => api.get('/wallet/list'),
 };
 
-export const transferAPI = {
-  transfer: (walletAddress: string, toAddress: string, amount: string, tokenAddress?: string) =>
-    api.post('/transfer', {
+export const vaultAPI = {
+  deposit: (walletAddress: string, amount: string, symbol: string) =>
+    api.post('/vault/deposit', {
+      wallet_address: walletAddress,
+      amount,
+      symbol,
+    }),
+  transfer: (walletAddress: string, toAddress: string, amount: string, symbol: string) =>
+    api.post('/vault/transfer', {
       wallet_address: walletAddress,
       to_address: toAddress,
       amount,
-      token_address: tokenAddress || null,
+      symbol,
     }),
+  withdraw: (walletAddress: string, amount: string, symbol: string) =>
+    api.post('/vault/withdraw', {
+      wallet_address: walletAddress,
+      amount,
+      symbol,
+    }),
+};
+
+export const transferAPI = {
+  transfer: (walletAddress: string, toAddress: string, amount: string, symbol: string = 'ETH') =>
+    vaultAPI.transfer(walletAddress, toAddress, amount, symbol),
 };
 
 export const transactionAPI = {
   history: (limit?: number, offset?: number) =>
-    api.get('/transactions', { params: { limit, offset } }),
+    api.get('/transactions/history', { params: { limit, offset } }),
 };
 
 export default api;

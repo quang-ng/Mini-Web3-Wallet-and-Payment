@@ -1,13 +1,11 @@
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import walletRouter from "./routes/wallet";
-import transactionRouter from "./routes/transaction";
 import eventListener from "./workers/eventListener";
-import tokenBalanceRouter from "./routes/tokenBalance"
 import authRouter from "./routes/auth"
-import transferRouter from "./routes/transfer"
-import authWalletsRouter from "./routes/auth_wallets"
+import vaultRouter from "./routes/vault"
+import walletRouter from "./routes/wallets"
+import transactionRouter from "./routes/transactions"
 
 
 
@@ -28,17 +26,24 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
-app.use("/api/wallet", walletRouter);
-app.use("/api/transaction", transactionRouter);
-app.use("/api/transactions", transactionRouter);
-app.use("/api/balances", tokenBalanceRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/transfer", transferRouter);
-app.use("/api/wallets", authWalletsRouter)
+app.use("/api/vault", vaultRouter);
+app.use("/api/wallet", walletRouter);
+app.use("/api/transactions", transactionRouter);
+// app.use("/api/auth-wallets", authWalletsRouter)
+// app.use("/api/auth-transfer", authTransferRouter);
+
+// app.use("/api/wallet", walletRouter);
+// app.use("/api/transaction", transactionRouter);
+// app.use("/api/transactions", transactionRouter);
+// app.use("/api/balances", tokenBalanceRouter);
+
+// app.use("/api/transfer", transferRouter);
+// app.use("/api/wallets", authWalletsRouter)
 
 // Basic test route
 app.get("/health", (req: Request, res: Response) => {
-  res.json({ message: "Server is running22222222!" });
+  res.json({ message: "Server is running!!!" });
 });
 
 // Start server

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import contract from "../blockchain/contract";
+import paymentVaultcontract from "../blockchain/contract";
 import { provider } from "../blockchain/provider";
 import transactionDb from "../db/transactionDb";
 
@@ -69,8 +69,8 @@ class SyncService {
 
       // Query Deposit events
       const depositEvents = await this.retryWithBackoff(
-        () => contract.queryFilter(
-          contract.filters.Deposit(),
+        () => paymentVaultcontract.queryFilter(
+          paymentVaultcontract.filters.Deposit(),
           lastSyncedBlock + 1,
           currentBlock
         ),
@@ -110,8 +110,8 @@ class SyncService {
 
       // Query Withdraw events
       const withdrawEvents = await this.retryWithBackoff(
-        () => contract.queryFilter(
-          contract.filters.Withdraw(),
+        () => paymentVaultcontract.queryFilter(
+          paymentVaultcontract.filters.Withdraw(),
           lastSyncedBlock + 1,
           currentBlock
         ),
