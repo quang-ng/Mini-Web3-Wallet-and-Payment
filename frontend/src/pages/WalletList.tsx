@@ -58,10 +58,21 @@ const WalletList: React.FC = () => {
 
   const copyToClipboard = (address: string) => {
     navigator.clipboard.writeText(address);
+    alert('Address copied!');
   };
 
   const maskAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatBalance = (balance: string, decimals: number = 4): string => {
+    try {
+      const num = parseFloat(balance);
+      if (isNaN(num)) return '0';
+      return num.toFixed(decimals);
+    } catch {
+      return '0';
+    }
   };
 
   return (
@@ -111,12 +122,12 @@ const WalletList: React.FC = () => {
                     </small>
                     {wallet.ETH !== undefined && (
                       <small style={{ color: '#667eea', fontWeight: 'bold' }}>
-                        Ξ {parseFloat(wallet.ETH).toFixed(4)} ETH
+                        Ξ {formatBalance(wallet.ETH, 4)} ETH
                       </small>
                     )}
                     {wallet.SIMPLE !== undefined && (
                       <small style={{ color: '#764ba2', fontWeight: 'bold' }}>
-                        🎫 {parseFloat(wallet.SIMPLE).toFixed(4)} SIMPLE
+                        🎫 {formatBalance(wallet.SIMPLE, 4)} SIMPLE
                       </small>
                     )}
                   </div>
@@ -125,10 +136,23 @@ const WalletList: React.FC = () => {
                   <button
                     onClick={() => copyToClipboard(wallet.wallet_address)}
                     className={styles.copyBtn}
-                    title="Copy address"
+                    title="Copy full address"
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.85rem',
+                      fontWeight: '500',
+                      color: '#667eea'
+                    }}
                   >
-                    📋
+                    📋 Copy
                   </button>
+                  <Link
+                    to="/deposit"
+                    state={{ wallet_address: wallet.wallet_address }}
+                    className={styles.transferBtn}
+                  >
+                    Deposit
+                  </Link>
                   <Link
                     to="/transfer"
                     state={{ wallet_address: wallet.wallet_address }}
