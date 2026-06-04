@@ -82,13 +82,13 @@ const TransactionHistory: React.FC = () => {
                     <tr key={tx.id} style={{ borderBottom: '1px solid #eee' }}>
                       <td style={{ padding: '0.75rem' }}>{formatDate(tx.created_at)}</td>
                       <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                        <a href={`https://etherscan.io/address/${tx.from_address}`} target="_blank" rel="noopener noreferrer"
+                        <a href={`https://sepolia.etherscan.io/address/${tx.from_address}`} target="_blank" rel="noopener noreferrer"
                           style={{ color: '#667eea', textDecoration: 'none' }}>
                           {formatAddress(tx.from_address)}
                         </a>
                       </td>
                       <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                        <a href={`https://etherscan.io/address/${tx.to_address}`} target="_blank" rel="noopener noreferrer"
+                        <a href={`https://sepolia.etherscan.io/address/${tx.to_address}`} target="_blank" rel="noopener noreferrer"
                           style={{ color: '#667eea', textDecoration: 'none' }}>
                           {formatAddress(tx.to_address)}
                         </a>
@@ -108,7 +108,7 @@ const TransactionHistory: React.FC = () => {
                         </span>
                       </td>
                       <td style={{ padding: '0.75rem' }}>
-                        <a href={`https://etherscan.io/tx/${tx.tx_hash}`} target="_blank" rel="noopener noreferrer"
+                        <a href={`https://sepolia.etherscan.io/tx/${tx.tx_hash}`} target="_blank" rel="noopener noreferrer"
                           style={{ color: '#667eea', textDecoration: 'none', fontSize: '0.85rem' }}>
                           View →
                         </a>

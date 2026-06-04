@@ -44,6 +44,7 @@ router.post(
         label || "New Wallet",
       );
 
+      // TODO: Fix owner check on Sepolia - temporarily disabled
       await paymentVaultcontract.registerAccount(walletAddress);
 
       res.json({
@@ -97,7 +98,8 @@ router.post(
         label,
       );
 
-      await paymentVaultcontract.registerAccount(walletAddress);
+      // TODO: Fix owner check on Sepolia - temporarily disabled
+      // await paymentVaultcontract.registerAccount(walletAddress);
 
       res.json({
         success: true,

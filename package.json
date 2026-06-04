@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@ethersproject/keccak256": "^5.8.0",
+    "elliptic": "^6.6.1"
+  }
+}
